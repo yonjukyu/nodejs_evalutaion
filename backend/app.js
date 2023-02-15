@@ -1,6 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 const stuffRoutes = require('./routes/stuff');
 const userRoutes = require('./routes/user');
 // const productRoutes = require('./routes/product');
@@ -36,5 +39,7 @@ app.use(cors({ origin: true, credentials: true }));
 app.use('/api/stuff', stuffRoutes);
 app.use('/api/auth', userRoutes);
 // app.use('/api/products', productRoutes);
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 module.exports = app;
