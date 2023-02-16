@@ -6,7 +6,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const persoRoutes = require('./routes/perso');
 const userRoutes = require('./routes/user');
-
+const playerRoutes = require('./routes/player')
 const app = express();
 
 mongoose
@@ -26,6 +26,7 @@ app.use(cors({ origin: true, credentials: true }));
 
 app.use('/api/perso',persoRoutes);
 app.use('/api/auth', userRoutes);
+app.use('/api/player', playerRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

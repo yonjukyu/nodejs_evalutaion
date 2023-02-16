@@ -4,21 +4,18 @@ const persoController = require('../controllers/Perso');
 const auth = require("../middleware/auth");
 
 // GET
-router.get('/', auth, persoController.getAllPerso);
+router.get('/', auth, persoController.getAllPersoFromSomeone);
 
 // GET
-router.get('/:userId', auth, persoController.getAllPersoFromSomeone);
+router.get('/getPersoWithNameAndClass', auth, persoController.getPersoWithNameAndClass);
 
 // POST
 router.post('/createPerso', auth, persoController.createPerso);
 
-// GET
-//router.get('/:name', auth, persoController.getOnePerso);
-
 // PUT
-//router.put('/:name', auth, persoController.updatePerso);
+router.put('/', auth, persoController.updatePerso);
 
 // DELETE
-//router.delete('/:name', auth, persoController.deletePerso);
+router.delete('/', auth, persoController.deletePerso);
 
 module.exports = router;

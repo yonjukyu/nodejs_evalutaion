@@ -3,14 +3,14 @@
     "info": {
         "version": "3.0.0",
         "title": "API CRU D'OBJETS",
-        "description": "Une API qui permet d'ajouter toutes choses et d'autres"
+        "description": "Une API qui permet d'ajouter et de supprimer des personnages de WOW"
     },
     "host": "localhost:3000",
     "basePath": "/",
     "tags": [
         {
-            "name": "La formation",
-            "description": "Une API pour apprendre nodeJS"
+            "name": "TP noté nackend Node JS",
+            "description": "Potentiellement la meilleure API du monde"
         }
     ],
     "schemes": ["http"],
@@ -25,57 +25,35 @@
     "consumes": ["application/json"],
     "produces": ["application/json"],
     "paths": {
-        "/api/stuff": {
-            "get": {
-                "tags": ["Thing"],
-                "summary": "Lister tous les objets",
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Retourne une liste de Thing",
-                        "schema": {
-                            "$ref": "#/definitions/Thing"
-                        }
-                    },
-                    "400": {
-                        "description": "Erreur retournée par l'API"
-                    }
-                }
-            },
+        "/api/auth/signup": {
             "post": {
-                "tags": ["Thing"],
-                "summary": "Créer un objet",
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
+                "tags": ["User"],
+                "summary": "Enregistrer un utilisateur",
                 "parameters": [
                     {
-                        "name": "thing",
+                        "name": "email",
                         "in": "body",
-                        "description": "Objet à créer. À mettre dans une clé \"thing\"",
-                        "schema": {
-                            "$ref": "#/definitions/Thing"
-                        }
+                        "required": true,
+                        "description": "Adresse e-mail de l'utilisateur : `req.body.email`",
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "description": "Mot de passe de l'utilisateur : `req.body.password`",
+                        "type": "string"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Objet enregistré",
+                        "description": "Utilisateur enregistré",
                         "schema": {
-                            "$ref": "#/definitions/ThingWithoutUserId"
+                            "$ref": "#/definitions/User"
                         }
                     },
                     "400": {
                         "description": "Erreur retournée par l'API"
-                    },
-                    "401": {
-                        "description": "Utilisateur non autorisé"
                     }
                 },
                 "produces": [
@@ -83,19 +61,142 @@
                 ]
             }
         },
-        "/api/stuff/{id}": {
+        "/api/auth/login": {
+            "post": {
+                "tags": ["User"],
+                "summary": "Authentifier un utilisateur",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "description": "Adresse e-mail de l'utilisateur : - `req.body.email`",
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "description": "Mot de passe de l'utilisateur : `req.body.password`",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Utilisateur authentifié",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur retournée par l'API"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "/api/perso/createPerso": {
+            "post": {
+                "tags": ["Perso"],
+                "summary": "Créer un perso de wow",
+                "parameters": [
+                    {
+                        "name": "pseudo",
+                        "in": "body",
+                        "required": false,
+                        "description": "Pseudo du personnage : `req.body.pseudo`",
+                        "type": "string"
+                    },
+                    {
+                        "name": "class",
+                        "in": "body",
+                        "required": false,
+                        "description": "Classe du personnage : `req.body.class`",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Personnage créé",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur retournée par l'API"
+                    },
+                    "401": {
+                        "description": "Paire pseudo et classe déjà existante"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "/api/perso/getPersoWithNameAndClass/{class}/{name}": {
+            "get": {
+                "tags": ["Character"],
+                "summary": "Lister les informations d'un personnage",
+                "parameters": [
+                    {
+                        "name": "pseudo",
+                        "in": "path",
+                        "required": true,
+                        "description": "Pseudo du personnage : `req.params.pseudo`",
+                        "type": "string"
+                    },
+                    {
+                        "name": "class",
+                        "in": "path",
+                        "required": true,
+                        "description": "Classe du personnage : `req.params.class`",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retourne un Character",
+                        "schema": {
+                            "$ref": "#/definitions/Perso"
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur retournée par l'API"
+                    }
+                }
+            }
+        },
+        "/api/perso/{id}": {
             "parameters": [
                 {
                     "name": "id",
                     "in": "path",
                     "required": true,
-                    "description": "ID de l'objet",
+                    "description": "Identifiant du personnage : `req.params.id`",
                     "type": "string"
                 }
             ],
+            "get": {
+                "tags": ["Perso"],
+                "summary": "Lister les informations d'un personnage",
+                "responses": {
+                    "200": {
+                        "description": "Retourne un Perso",
+                        "schema": {
+                            "$ref": "#/definitions/Perso"
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur retournée par l'API"
+                    }
+                }
+            },
             "put": {
-                "tags": ["Thing"],
-                "summary": "Modifier un objet",
+                "tags": ["Perso"],
+                "summary": "Modifier un personnage",
                 "security": [
                     {
                         "Bearer": []
@@ -103,26 +204,42 @@
                 ],
                 "parameters": [
                     {
-                        "name": "thing",
+                        "name": "pseudo",
                         "in": "body",
-                        "description": "Objet à modifier. À mettre dans une clé \"thing\"",
-                        "schema": {
-                            "$ref": "#/definitions/Thing"
-                        }
+                        "description": "Pseudo du personnage : `req.body.pseudo`",
+                        "type": "string"
+                    },
+                    {
+                        "name": "class",
+                        "in": "body",
+                        "description": "Classe du personnage : `req.body.class`",
+                        "type": "string"
+                    },
+                    {
+                        "name": "level",
+                        "in": "body",
+                        "description": "Niveau du personnage : `req.body.level`",
+                        "type": "number"
+                    },
+                    {
+                        "name": "userId",
+                        "in": "body",
+                        "description": "Identifiant de l'utilisateur du personnage : `req.body.userId`",
+                        "type": "string"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Objet modifié",
+                        "description": "Personnage modifié",
                         "schema": {
-                            "$ref": "#/definitions/Thing"
+                            "$ref": "#/definitions/Perso"
                         }
                     },
                     "400": {
-                        "description": "Objet inexistant"
+                        "description": "Personnage inexistant"
                     },
                     "401": {
-                        "description": "Ce n'est pas l'objet de l'utilisateur"
+                        "description": "Ce n'est pas votre perso !"
                     }
                 },
                 "produces": [
@@ -130,35 +247,25 @@
                 ]
             },
             "delete": {
-                "tags": ["Thing"],
-                "summary": "Supprimer un objet",
+                "tags": ["Perso"],
+                "summary": "Supprimer un personnage",
                 "security": [
                     {
                         "Bearer": []
                     }
                 ],
-                "parameters": [
-                    {
-                        "name": "thing",
-                        "in": "body",
-                        "description": "Objet à supprimer. À mettre dans une clé \"thing\"",
-                        "schema": {
-                            "$ref": "#/definitions/Thing"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
-                        "description": "Objet supprimé",
+                        "description": "Personnage supprimé",
                         "schema": {
-                            "$ref": "#/definitions/Thing"
+                            "$ref": "#/definitions/Perso"
                         }
                     },
                     "400": {
-                        "description": "Objet inexistant"
+                        "description": "Personnage inexistant"
                     },
                     "401": {
-                        "description": "Ce n'est pas l'objet de l'utilisateur"
+                        "description": "Ce n'est pas votre Perso !"
                     }
                 },
                 "produces": [
@@ -168,40 +275,31 @@
         }
     },
     "definitions": {
-        "Thing": {
-            "required": ["title", "description", "imageUrl", "userId", "price"],
+        "User": {
+            "required": ["email", "password"],
             "properties": {
-                "title": {
+                "email": {
                     "type": "string"
                 },
-                "description": {
+                "password": {
                     "type": "string"
-                },
-                "imageUrl": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
-        "ThingWithoutUserId": {
-            "required": ["title", "description", "imageUrl", "price"],
+        "Perso": {
+            "required": ["pseudo", "class", "level", "userId"],
             "properties": {
-                "title": {
+                "name": {
                     "type": "string"
                 },
-                "description": {
+                "class": {
                     "type": "string"
                 },
-                "imageUrl": {
-                    "type": "string"
-                },
-                "price": {
+                "level": {
                     "type": "number"
+                },
+                "userId": {
+                    "type": "string"
                 }
             }
         }
