@@ -2,9 +2,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const event = require('../events/sendMail');
+const {decode} = require("jsonwebtoken");
 
 // Inscription utilisateur
 const signUp = (req, res, next) => {
+    console.log(req.body.password)
     bcrypt
         .hash(req.body.password, 10)
         .then((hashPassword) => {
@@ -28,6 +30,7 @@ const signUp = (req, res, next) => {
 
 // Connexion utilisateur
 const login = (req, res, next) => {
+    console.log(req.body);
     User.findOne({ email: req.body.email })
         .then((user) => {
             if (!user)
@@ -40,12 +43,23 @@ const login = (req, res, next) => {
                     return res
                         .status(401)
                         .json({ message: 'Authentification invalide' });
-
+                console.log(req.body.email === "admin@admin.admin")
+                if(req.body.email === "admin@admin.admin") {
+                    return res.status(200).json({
+                            userId: user._id,
+                            token: jwt.sign(
+                                { userId: user._id, isAdmin: true},
+                                'SR1wKQYqlTLVWZSlYkot3xTu0qdZuWDn',
+                                { expiresIn: '8760h' }
+                            )
+                    });
+                }
+                console.log(user._id)
                 res.status(200).json({
                     userId: user._id,
                     token: jwt.sign(
-                        { userId: user._id },
-                        'RANDOM_TOKEN_SECRET',
+                        { userId: user._id, isAdmin: false},
+                        'SR1wKQYqlTLVWZSlYkot3xTu0qdZuWDn',
                         { expiresIn: '24h' }
                     ),
                 });
@@ -54,4 +68,9 @@ const login = (req, res, next) => {
         .catch((error) => res.status(400).json({ error }));
 };
 
-module.exports = { signUp, login };
+const get = (req, res, next) => {
+    User.find()
+        .then((user) => res.status(200).json(user))
+        .catch((error) => res.status(400).json({ error }));
+}
+module.exports = { signUp, login, get };
